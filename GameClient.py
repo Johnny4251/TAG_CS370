@@ -27,8 +27,14 @@ class GameClient:
                     running = False
 
             keys = pygame.key.get_pressed()
-            print(keys)
             
+            if keys[pygame.K_ESCAPE]:
+                running = False
+            if keys[pygame.K_LEFT]:
+                print("Left key")
+            if keys[pygame.K_RIGHT]:
+                print("Right key")
+
             screen.fill((0, 0, 0))
 
             pygame.display.flip()
@@ -37,4 +43,5 @@ class GameClient:
         pygame.quit()
 
 if __name__ == "__main__":
-    GameClient.run()
+    gameClient = GameClient()
+    gameClient.run()
