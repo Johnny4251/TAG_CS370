@@ -16,6 +16,8 @@ class Testing:
         for i in range(50):
             self.send_data("testing #" + str(i))
             print("sent data ", i)
+            recv_data = self.client.recv(4096)
+            print("RECV: " + recv_data.decode())
             time.sleep(1)
         print("DONE")
         self.client.close()
