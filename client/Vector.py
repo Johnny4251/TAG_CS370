@@ -63,16 +63,3 @@ class Vector:
         m = self.mag()
         if(m>0):
             self.mul(m)
-    
-
-
-
-
-
-        
-
-           
-    
-
-  
-
