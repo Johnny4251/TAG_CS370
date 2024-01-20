@@ -5,12 +5,13 @@ from Packet import Packet
 
 # Multithreaded server that can handle multiple clients
 class GameServer:
-    def __init__(self, host='127.0.0.1', port=5555, client_max=2):
+    def __init__(self, host='127.0.0.1', port=5555, client_max=2, debug=False):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind((host, port))
         self.server.listen()
         self.clients = []
         self.client_max = client_max
+        self.debug = debug
     
     def unpack_packet(self, data):
         return pickle.loads(data)
@@ -28,10 +29,11 @@ class GameServer:
 
                 #print(f"received: {data} from {addr}")
                 packet = self.unpack_packet(data)
-                print(f"----{addr}----")
-                print(f"Header: \t{packet.header}")
-                print(f"Data  : \t{packet.data}")
-                print(f"----------------------------")
+                if self.debug:
+                    print(f"----{addr}----")
+                    print(f"Header: \t{packet.header}")
+                    print(f"Data  : \t{packet.data}")
+                    print(f"----------------------------")
 
                 for client in self.clients:
                     response = Packet(header="server", data="data from "+str(addr)+" ack")
@@ -58,7 +60,6 @@ class GameServer:
             conn, addr = self.server.accept()
             print(f"New Client: {addr}")
             if len(self.clients) < self.client_max:
-                print("appending new client...")
                 self.clients.append(conn)
 
                 for client in self.clients:
