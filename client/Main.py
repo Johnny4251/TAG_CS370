@@ -15,14 +15,14 @@ def gen_def_scene(client):
      wall = Boundary(Vector(50, 50), Vector(250, 50))
      client.walls.append(wall)
 
-     wall = Boundary(Vector(0, 0), Vector(client.window_width, 0))
+     wall = Boundary(Vector(0, 0), Vector(client.window_width, 0),(0,0,0))
      client.walls.append(wall)   
-     wall = Boundary(Vector(client.window_width, 0), Vector(client.window_width, client.window_height))
+     wall = Boundary(Vector(client.window_width, 0), Vector(client.window_width, client.window_height),(0,0,0))
      client.walls.append(wall)   
-     wall = Boundary(Vector(client.window_width, client.window_height), Vector(0, client.window_height))
+     wall = Boundary(Vector(client.window_width, client.window_height), Vector(0, client.window_height),(0,0,0))
      client.walls.append(wall) 
-     wall = Boundary(Vector(0, client.window_height), Vector(0, 0))
-     client.walls.append(wall)   
+     wall = Boundary(Vector(0, client.window_height), Vector(0, 0),(0,0,0))
+     client.walls.append(wall)    
 
      client.circles.append(Circle(300,200,25,(255,0,255)))
      client.circles.append(Circle(0,200,12,(0,255,255)))
@@ -33,24 +33,20 @@ def gen_scene_from_file(client,file_name):
     data = json.load(f)
     for obj in data:
         for bound in obj:
-            ax = bound['a']['x']
-            ay = bound['a']['y']
-            bx = bound['b']['x']
-            by = bound['b']['y']
-            r = bound['col']['r']
-            g = bound['col']['g']
-            b = bound['col']['b']
-            wall = Boundary(Vector(ax, ay), Vector(bx, by),(r,g,b))
+            a = (bound['a']['x'],bound['a']['y'])
+            b = (bound['b']['x'],bound['b']['y'])
+            col = (bound['col']['r'],bound['col']['g'],bound['col']['b'])
+            wall = Boundary(Vector(a), Vector(b),col)
             client.walls.append(wall)    
     f.close()
     # Generate border wall regardless of map data
-    wall = Boundary(Vector(0, 0), Vector(client.window_width, 0))
+    wall = Boundary(Vector(0, 0), Vector(client.window_width, 0),(0,0,0))
     client.walls.append(wall)   
-    wall = Boundary(Vector(client.window_width, 0), Vector(client.window_width, client.window_height))
+    wall = Boundary(Vector(client.window_width, 0), Vector(client.window_width, client.window_height),(0,0,0))
     client.walls.append(wall)   
-    wall = Boundary(Vector(client.window_width, client.window_height), Vector(0, client.window_height))
+    wall = Boundary(Vector(client.window_width, client.window_height), Vector(0, client.window_height),(0,0,0))
     client.walls.append(wall) 
-    wall = Boundary(Vector(0, client.window_height), Vector(0, 0))
+    wall = Boundary(Vector(0, client.window_height), Vector(0, 0),(0,0,0))
     client.walls.append(wall)   
     return
      

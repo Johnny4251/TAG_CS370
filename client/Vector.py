@@ -2,8 +2,12 @@
 import math as Math
 class Vector:
     def __init__(self,x=None,y=None):
-        self.x = x
-        self.y = y
+        if(type(x) == tuple and y == None):
+            self.x = x[0]
+            self.y = x[1]
+        else:
+            self.x = x
+            self.y = y
 
     def fromAngle(angle,v):
         if(v == None):

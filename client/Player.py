@@ -19,11 +19,8 @@ class Player:
         self.pos = pos
         self.rays = []
         self.collision_rays = []
-        for i in range(1):
-            self.collision_rays.append(Ray(self.pos,degreeToRadian(0)))
-            self.collision_rays.append(Ray(self.pos,degreeToRadian(90)))
-            self.collision_rays.append(Ray(self.pos,degreeToRadian(180)))
-            self.collision_rays.append(Ray(self.pos,degreeToRadian(270)))
+        for angle in range(0,360,90):
+            self.collision_rays.append(Ray(self.pos,degreeToRadian(angle)))
         self.divisor = ray_increment # the degree of approximation
 
 
@@ -34,18 +31,19 @@ class Player:
             self.rays.append( Ray(self.pos,degreeToRadian(degree)))
 
     def apply_fix(self,index):
+        bump = 2
         match index:
             case 0:
-                self.pos.x -= self.speed*2
+                self.pos.x -= self.speed*bump
                 return
             case 1:
-                self.pos.y -= self.speed*2
+                self.pos.y -= self.speed*bump
                 return
             case 2:
-                self.pos.x += self.speed*2
+                self.pos.x += self.speed*bump
                 return
             case 3:
-                self.pos.y += self.speed*2
+                self.pos.y += self.speed*bump
                 return
             case _:
                 return

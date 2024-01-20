@@ -10,6 +10,7 @@ def map_domain(num, in_min, in_max, out_min, out_max):
 class GameClient:
     def __init__(self, host='127.0.0.1', port=5555):
         pygame.init()
+        self.debug_mode = False
         self.window_should_stay_open = True
         self.window_width = 800
         self.window_height = 600
@@ -40,6 +41,8 @@ class GameClient:
     def handle_keys(self):
         if(self.keys[pygame.K_ESCAPE]):
             self.window_should_stay_open = False
+        if self.keys[pygame.K_p]:
+                self.debug_mode =  not self.debug_mode
         past_state = (self.player.pos.x,self.player.pos.y)
         if self.keys[pygame.K_w]:
                 self.player.update(self.player.pos.x,  self.player.pos.y - self.player.speed)
@@ -50,6 +53,7 @@ class GameClient:
         if self.keys[pygame.K_d]:
                 self.player.update(self.player.pos.x + self.player.speed,self.player.pos.y)
         self.player.check_collisions(self.walls)
+    
              
              
         return
@@ -76,6 +80,9 @@ class GameClient:
     
     def render(self):
         self.window.fill((0, 0, 0))
+        if(self.debug_mode):
+            for x in self.walls:
+                x.render(self.window)
         if(self.mosueB[0]):
              self.player.look(self.window,self.walls,self.circles)
         self.player.render(self.window)
