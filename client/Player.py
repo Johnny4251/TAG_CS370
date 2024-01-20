@@ -36,22 +36,22 @@ class Player:
     def apply_fix(self,index):
         match index:
             case 0:
-                self.pos.x -= self.speed
+                self.pos.x -= self.speed*2
                 return
             case 1:
-                self.pos.y += self.speed
+                self.pos.y -= self.speed*2
                 return
             case 2:
-                self.pos.x += self.speed
+                self.pos.x += self.speed*2
                 return
             case 3:
-                self.pos.y -= self.speed
+                self.pos.y += self.speed*2
                 return
             case _:
                 return
 
 
-    def has_collisions(self,walls):
+    def check_collisions(self,walls):
         for i in range(len(self.collision_rays)):
             pt = None
             closest = None
@@ -62,6 +62,7 @@ class Player:
                 if(pt):
                     dist = Vector.dist(self.pos,pt)
                     if(dist < record):
+                        self.apply_fix(i)
                         return True
         return False
 

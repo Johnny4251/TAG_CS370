@@ -1,3 +1,4 @@
+# Map builder located at https://editor.p5js.org/Blungus23/full/j1zqoJMKq
 import json
 from Vector import Vector
 from GameClient import GameClient 
@@ -30,18 +31,28 @@ def gen_def_scene(client):
 def gen_scene_from_file(client,file_name):
     f = open(file_name)
     data = json.load(f)
-    for bound in data[0]:
-        ax = bound['a']['x']
-        ay = bound['a']['y']
-        bx = bound['b']['x']
-        by = bound['b']['y']
-        r = bound['col']['r']
-        g = bound['col']['g']
-        b = bound['col']['b']
-        wall = Boundary(Vector(ax, ay), Vector(bx, by),(r,g,b))
-        client.walls.append(wall)    
+    for obj in data:
+        for bound in obj:
+            ax = bound['a']['x']
+            ay = bound['a']['y']
+            bx = bound['b']['x']
+            by = bound['b']['y']
+            r = bound['col']['r']
+            g = bound['col']['g']
+            b = bound['col']['b']
+            wall = Boundary(Vector(ax, ay), Vector(bx, by),(r,g,b))
+            client.walls.append(wall)    
     f.close()
-    pass
+    # Generate border wall regardless of map data
+    wall = Boundary(Vector(0, 0), Vector(client.window_width, 0))
+    client.walls.append(wall)   
+    wall = Boundary(Vector(client.window_width, 0), Vector(client.window_width, client.window_height))
+    client.walls.append(wall)   
+    wall = Boundary(Vector(client.window_width, client.window_height), Vector(0, client.window_height))
+    client.walls.append(wall) 
+    wall = Boundary(Vector(0, client.window_height), Vector(0, 0))
+    client.walls.append(wall)   
+    return
      
 if __name__ == "__main__":
     gameClient = GameClient()

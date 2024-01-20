@@ -17,7 +17,7 @@ class GameClient:
         self.keys = []
         self.walls = []
         self.circles = []
-        self.player = Player(Vector(362,32),0.1)
+        self.player = Player(Vector(200,200),0.1)
         self.clock = pygame.time.Clock()
         self.mouseX = 0
         self.mouseY = 0
@@ -49,8 +49,9 @@ class GameClient:
                 self.player.update(self.player.pos.x - self.player.speed,self.player.pos.y)
         if self.keys[pygame.K_d]:
                 self.player.update(self.player.pos.x + self.player.speed,self.player.pos.y)
-        if(self.player.has_collisions(self.walls)):
-             self.player.update(past_state[0],past_state[1])
+        self.player.check_collisions(self.walls)
+             
+             
         return
 
     def update(self):
@@ -61,12 +62,15 @@ class GameClient:
         theta = Math.atan2(dy,dx)
         self.player.update_rays(theta)
 
-        # self.circles[1].pos.x = (self.circles[1].pos.x + 1) % self.window_width 
-        # self.circles[1].pos.y = Math.sin(self.circles[1].pos.x/self.freq) * self.amp + self.offy
-        # if(self.circles[1].pos.x == 0):
-        #      self.amp = random.randint(10,200)
-        #      self.freq = random.randint(10,200)
-        #      self.offy = random.randint(0,self.window_height-30)    
+        # This is for the default scene and can be deleted later
+        if(len(self.circles) > 1):
+            self.circles[1].pos.x = (self.circles[1].pos.x + 1) % self.window_width 
+            self.circles[1].pos.y = Math.sin(self.circles[1].pos.x/self.freq) * self.amp + self.offy
+            if(self.circles[1].pos.x == 0):
+                 self.amp = random.randint(10,200)
+                 self.freq = random.randint(10,200)
+                 self.offy = random.randint(0,self.window_height-30)    
+    
         self.clock.tick(60) # fixed 60 tick update 
         return
     
