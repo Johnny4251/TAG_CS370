@@ -34,7 +34,7 @@ class GameServer:
                 print(f"----------------------------")
 
                 for client in self.clients:
-                    response = Packet(header="server", data="ack")
+                    response = Packet(header="server", data="data from "+str(addr)+" ack")
                     response = response.serialize()
                     client.send(response)
 
@@ -65,5 +65,5 @@ class GameServer:
             print(f"Lobby Size ({len(self.clients)}/{self.client_max})")
 
 if __name__ == "__main__":
-    server = GameServer()
+    server = GameServer(client_max=3)
     server.run()

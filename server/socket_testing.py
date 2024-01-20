@@ -18,10 +18,10 @@ class Testing:
         return pickle.loads(data)
 
     def run(self):
-        
+        print(self.client)
         try:
 
-            for i in range(50):
+            for i in range(60):
                 # sending packet
                 packet = Packet("looping_packet", i)
                 data = packet.serialize()
