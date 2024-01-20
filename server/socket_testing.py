@@ -1,5 +1,7 @@
 import socket
 import time
+import pickle
+from Packet import Packet
 
 class Testing:
     def __init__(self, host='127.0.0.1', port=5555):
@@ -8,19 +10,42 @@ class Testing:
 
     def send_data(self, data):
         try:
-            self.client.send(data.encode())
+            self.client.send(data)
         except socket.error as e:
             print(e)
 
+    def unpack_packet(self, data):
+        return pickle.loads(data)
+
     def run(self):
-        for i in range(50):
-            self.send_data("testing #" + str(i))
-            print("sent data ", i)
-            recv_data = self.client.recv(4096)
-            print("RECV: " + recv_data.decode())
-            time.sleep(1)
-        print("DONE")
-        self.client.close()
+        
+        try:
+
+            for i in range(50):
+                # sending packet
+                packet = Packet("looping_packet", i)
+                data = packet.serialize()
+                self.send_data(data)
+
+                # getting response, print response
+                response = self.client.recv(4096)
+                response = self.unpack_packet(response)
+                if response.header == "lobby_full":
+                    print("lobby is full")
+                    print(f"max lobby count={response.data}")
+                else:
+                    print("-----")
+                    print(f"Header: {response.header}")
+                    print(f"Data: {response.data}")
+                    print("-----")
+                    time.sleep(1)
+
+            #self.client.close()
+            print("DONE")
+        except ConnectionResetError:
+            print("host closed connection...")
+        except Exception as e:
+            print(f"Reached exception:{e}")
 
 if __name__ == "__main__":
     Testing().run()

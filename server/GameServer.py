@@ -1,5 +1,7 @@
 import socket
 import threading
+import pickle
+from Packet import Packet
 
 # Multithreaded server that can handle multiple clients
 class GameServer:
@@ -10,25 +12,36 @@ class GameServer:
         self.clients = []
         self.client_max = client_max
     
+    def unpack_packet(self, data):
+        return pickle.loads(data)
+
     def client_thread(self, conn, addr):
         while True:
             try:
                 data = conn.recv(4096)
                 if not data:
-                    print(f"Client {addr} disconnected") # WIP?
+                    # WIP
+                    print(f"Client {addr}, sent no data so they are getting removed...")
                     self.clients.remove(conn)
                     conn.close()
                     break
 
-                print(f"received: {data.decode()} from {addr}")
+                #print(f"received: {data} from {addr}")
+                packet = self.unpack_packet(data)
+                print(f"----{addr}----")
+                print(f"Header: \t{packet.header}")
+                print(f"Data  : \t{packet.data}")
+                print(f"----------------------------")
 
                 for client in self.clients:
-                    data = "ack"
-                    data = data.encode()
-                    client.send(data)
+                    response = Packet(header="server", data="ack")
+                    response = response.serialize()
+                    client.send(response)
 
             except Exception as e:
-                print(f"An error occurred with client {addr}: {e}")
+                # this exception is WIP
+                print(f"There was an issue with a client: {addr}, so they are getting removed...")
+                print(f"The issue: {e}")
                 self.clients.remove(conn)
                 conn.close()
                 break
@@ -37,16 +50,18 @@ class GameServer:
         print("Server Started...")
         while True:
             conn, addr = self.server.accept()
-            print(f"Connected to {addr}")
+            print(f"New Client: {addr}")
             if len(self.clients) < self.client_max:
                 print("appending new client...")
                 self.clients.append(conn)
                 threading.Thread(target=self.client_thread, args=(conn, addr)).start()
             else:
-                print("rejecting client -> lobby full")
-                data = "SERVER REFUSES CONNECTION -> LOBBY FULL"
-                conn.send(data.encode())
+                print("rejecting client => lobby full")
+                data = Packet(header="lobby_full", data=self.client_max)
+                data = data.serialize()
+                conn.send(data)
                 conn.close()
+
             print(f"Lobby Size ({len(self.clients)}/{self.client_max})")
 
 if __name__ == "__main__":
