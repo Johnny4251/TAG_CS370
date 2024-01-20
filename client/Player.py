@@ -18,13 +18,52 @@ class Player:
         self.ray_count = 3  # low resolution 
         self.pos = pos
         self.rays = []
+        self.collision_rays = []
+        for i in range(1):
+            self.collision_rays.append(Ray(self.pos,degreeToRadian(0)))
+            self.collision_rays.append(Ray(self.pos,degreeToRadian(90)))
+            self.collision_rays.append(Ray(self.pos,degreeToRadian(180)))
+            self.collision_rays.append(Ray(self.pos,degreeToRadian(270)))
         self.divisor = ray_increment # the degree of approximation
+
 
     def update_rays(self,theta):
         self.rays = []
         for i in np.arange(0,self.ray_count,self.divisor):
             degree = radianToDegree(theta) + 4 * i
             self.rays.append( Ray(self.pos,degreeToRadian(degree)))
+
+    def apply_fix(self,index):
+        match index:
+            case 0:
+                self.pos.x -= self.speed
+                return
+            case 1:
+                self.pos.y += self.speed
+                return
+            case 2:
+                self.pos.x += self.speed
+                return
+            case 3:
+                self.pos.y -= self.speed
+                return
+            case _:
+                return
+
+
+    def has_collisions(self,walls):
+        for i in range(len(self.collision_rays)):
+            pt = None
+            closest = None
+            record = self.size*1.5 # keep it small
+            ray = self.collision_rays[i]
+            for wall in walls:
+                pt = ray.cast(wall)
+                if(pt):
+                    dist = Vector.dist(self.pos,pt)
+                    if(dist < record):
+                        return True
+        return False
 
     def update(self,x,y):
         self.pos.x = x
@@ -57,7 +96,7 @@ class Player:
 
             if (closest):
                 #Draw Ray
-                pygame.draw.line(window,(255,243,0,1),(self.pos.x,self.pos.y),(closest.x,closest.y))
+                pygame.draw.line(window,(255,243,0,255),(self.pos.x,self.pos.y),(closest.x,closest.y))
                 pygame.draw.circle(window,col,(closest.x,closest.y),1)
                 if(circ != None):
                     pygame.draw.circle(window,col,(circ.x,circ.y),1)
