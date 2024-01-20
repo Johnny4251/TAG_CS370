@@ -53,9 +53,9 @@ class Testing:
 
             frame_rate = 60
             frame_interval = 1.0 / frame_rate
-            for i in range(2000):
+            for i in range(500):
                 frame_start_time = time.time()
-                
+
                 # sending packet
                 packet = Packet("looping_packet", i)
                 data = packet.serialize()
