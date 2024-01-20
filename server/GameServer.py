@@ -38,6 +38,12 @@ class GameServer:
                     response = response.serialize()
                     client.send(response)
 
+            except ConnectionResetError:
+                print(f"Client: {addr}, has closed their connection...")
+                self.clients.remove(conn)
+                conn.close()
+                break
+
             except Exception as e:
                 # this exception is WIP
                 print(f"There was an issue with a client: {addr}, so they are getting removed...")
@@ -54,6 +60,12 @@ class GameServer:
             if len(self.clients) < self.client_max:
                 print("appending new client...")
                 self.clients.append(conn)
+
+                for client in self.clients:
+                    response = Packet(header="server", data="Say Hello! A new client has joined!")
+                    response = response.serialize()
+                    client.send(response)
+
                 threading.Thread(target=self.client_thread, args=(conn, addr)).start()
             else:
                 print("rejecting client => lobby full")
@@ -65,5 +77,5 @@ class GameServer:
             print(f"Lobby Size ({len(self.clients)}/{self.client_max})")
 
 if __name__ == "__main__":
-    server = GameServer(client_max=3)
+    server = GameServer(client_max=5)
     server.run()
