@@ -23,12 +23,15 @@ class GameServer:
         for line in banner_lines:
             print(line)
 
+    # Used to deserialize Packets
     def unpack_packet(self, data):
         return pickle.loads(data)
 
+    # Thread created to handle each client
     def client_thread(self, conn, addr):
         while True:
             try:
+                # Recv data
                 data = conn.recv(4096)
                 if not data:
                     # WIP
@@ -37,7 +40,7 @@ class GameServer:
                     conn.close()
                     break
 
-                #print(f"received: {data} from {addr}")
+                # Deserialize data into packet
                 packet = self.unpack_packet(data)
                 if self.debug:
                     print(f"----{addr}----")
@@ -66,10 +69,16 @@ class GameServer:
 
     def run(self):
         self.server_startup_banner()
+
+        # main loop
         while True:
             print("listening for new clients...")
+
+            # client accepted -> continue
             conn, addr = self.server.accept()
             print(f"New Client: {addr}")
+
+            # Check if lobby is full
             if len(self.clients) < self.client_max:
                 self.clients.append(conn)
 
@@ -78,8 +87,10 @@ class GameServer:
                     response = response.serialize()
                     client.send(response)
 
+                # Give client a thread
                 threading.Thread(target=self.client_thread, args=(conn, addr)).start()
             else:
+                # Full lobby => no thread
                 print("rejecting client => lobby full")
                 data = Packet(header="lobby_full", data=self.client_max)
                 data = data.serialize()
