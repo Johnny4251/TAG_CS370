@@ -13,6 +13,16 @@ class GameServer:
         self.client_max = client_max
         self.debug = debug
     
+    def server_startup_banner(self):
+        banner_lines = [
+            "+-------------------------------------+",
+            "|       Python Tag Game Server        |",
+            "|          Starting Up...             |",
+            "+-------------------------------------+"
+        ]
+        for line in banner_lines:
+            print(line)
+
     def unpack_packet(self, data):
         return pickle.loads(data)
 
@@ -55,8 +65,9 @@ class GameServer:
                 break
 
     def run(self):
-        print("Server Started...")
+        self.server_startup_banner()
         while True:
+            print("listening for new clients...")
             conn, addr = self.server.accept()
             print(f"New Client: {addr}")
             if len(self.clients) < self.client_max:
