@@ -57,7 +57,7 @@ class GameServer:
                         response = response.serialize()
                         client.send(response)
                     else:
-                        response = Packet(source="server", header="header", data="data from "+str(addr)+" ack")
+                        response = Packet(source="server", header="header", data=packet.data)
                         response = response.serialize()
                         client.send(response)
 
