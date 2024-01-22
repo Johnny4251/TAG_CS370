@@ -1,6 +1,6 @@
 # Map builder located at https://editor.p5js.org/Blungus23/full/j1zqoJMKq
 import json
-import socket
+from ClientSocket import ClientSocket
 from Vector import Vector
 from GameClient import GameClient 
 from Boundary import Boundary
@@ -52,7 +52,8 @@ def gen_scene_from_file(client,file_name):
     return
      
 if __name__ == "__main__":
-    gameClient = GameClient()
+    gameSocket = ClientSocket()
+    gameClient = GameClient(gameSocket)
     #gen_def_scene(gameClient)
     gen_scene_from_file(gameClient,'map_data2.json')
     while gameClient.window_should_stay_open:

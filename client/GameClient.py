@@ -4,11 +4,8 @@ import random
 from Vector import Vector
 from Player import Player
 
-def map_domain(num, in_min, in_max, out_min, out_max):
-    return int((num - in_min) * (out_max - out_min) / (in_max - in_min) + out_min)
-
 class GameClient:
-    def __init__(self, host='127.0.0.1', port=5555):
+    def __init__(self,client_socket):
         pygame.init()
         self.debug_mode = False
         self.window_should_stay_open = True

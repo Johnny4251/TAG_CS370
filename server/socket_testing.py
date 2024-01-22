@@ -5,7 +5,7 @@ import threading
 from Packet import Packet
 
 class Testing:
-    def __init__(self, host='127.0.0.1', port=5555, listening=True):
+    def __init__(self, host='127.0.0.1', port=3000, listening=True):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.connect((host, port))
         self.listening = listening
