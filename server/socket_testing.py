@@ -61,28 +61,7 @@ class Testing:
                 packet = Packet(self.name, "msg", text)
                 packet = packet.serialize()
                 self.send_data(packet)
-            """
-            frame_rate = 60
-            frame_interval = 1.0 / frame_rate
-            for i in range(500):
-                frame_start_time = time.time()
-
-                # sending packet
-                packet = Packet("looping_packet", i)
-                data = packet.serialize()
-                self.send_data(data)
-                time.sleep(.1)
-
-                frame_elapsed_time = time.time() - frame_start_time
-
-                if frame_elapsed_time < frame_interval:
-                    time.sleep(frame_interval - frame_elapsed_time)
             
-            self.client.close()
-            print("DONE SENDING")
-            self.listening = False
-            exit()
-            """
 
         except ConnectionResetError:
             print("host closed connection...")
