@@ -108,5 +108,3 @@ class GameServer:
 if __name__ == "__main__":
     server = GameServer(client_max=5)
     threading.Thread(target=server.run).start() 
-    
-    

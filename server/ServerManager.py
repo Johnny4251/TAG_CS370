@@ -8,10 +8,14 @@ class ServerManager:
 
 
 if __name__ == "__main__":
-    server_one = GameServer(port=12134)
-    server_two = GameServer(port=55555)
-    threading.Thread(target=server_one.run).start() 
-    time.sleep(1)
-    threading.Thread(target=server_two.run).start() 
+    client_max = input("Max number of clients: ")
+    addr = input("IP? ")
+    port = input("Port? ")
+    debug_input = input("Debug mode?(y or n) ")
+    debug = False
 
-    manager = ServerManager()
+    if debug_input[0] == 'y':
+        debug = True
+    
+    server = GameServer(host=addr, port=int(port), client_max=client_max, debug=debug)
+    server.run()
