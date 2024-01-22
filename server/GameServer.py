@@ -99,7 +99,7 @@ class GameServer:
                     response = Packet(source="server", header="header", data="Say Hello! A new client has joined!")
                     response = response.serialize()
                     client.send(response)
-
+                self.clients.append(client_conn)
                 # Give client a thread
                 try:
                     threading.Thread(target=self.client_thread, args=(client_conn, addr)).start()
