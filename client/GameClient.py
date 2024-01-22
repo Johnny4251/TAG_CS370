@@ -5,8 +5,9 @@ from Vector import Vector
 from Player import Player
 
 class GameClient:
-    def __init__(self,client_socket):
+    def __init__(self,client_socket=None):
         pygame.init()
+        print("HELLO")
         self.debug_mode = False
         self.window_should_stay_open = True
         self.window_width = 800
