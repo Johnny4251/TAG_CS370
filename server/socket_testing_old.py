@@ -18,7 +18,6 @@ class Testing:
             self.client.close()
             self.listening = False
             exit()
-        self.name = input("what is your name? ")
 
 
     def send_data(self, data):
@@ -43,25 +42,15 @@ class Testing:
                 exit()
             else:
                 print("-----")
-                print(f"From: {response.source}")
                 print(f"Header: {response.header}")
                 print(f"Data: {response.data}")
                 print("-----")
 
     def run(self):
-
         threading.Thread(target=self.recv_thread).start()
         print(self.client)
         try:
 
-            print("client running...")
-            while True:
-                time.sleep(1)
-                text = input("What would you like to send? ")
-                packet = Packet(self.name, "msg", text)
-                packet = packet.serialize()
-                self.send_data(packet)
-            """
             frame_rate = 60
             frame_interval = 1.0 / frame_rate
             for i in range(500):
@@ -77,12 +66,11 @@ class Testing:
 
                 if frame_elapsed_time < frame_interval:
                     time.sleep(frame_interval - frame_elapsed_time)
-            
+
             self.client.close()
             print("DONE SENDING")
             self.listening = False
             exit()
-            """
 
         except ConnectionResetError:
             print("host closed connection...")

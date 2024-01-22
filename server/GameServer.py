@@ -44,14 +44,20 @@ class GameServer:
                 packet = self.unpack_packet(data)
                 if self.debug:
                     print(f"----{addr}----")
+                    print(f"Source: \t{packet.source}")
                     print(f"Header: \t{packet.header}")
                     print(f"Data  : \t{packet.data}")
                     print(f"----------------------------")
 
                 for client in self.clients:
-                    response = Packet(source="server", header="header", data="data from "+str(addr)+" ack")
-                    response = response.serialize()
-                    client.send(response)
+                    if packet.header == "msg":
+                        response = Packet(source=packet.source, header="Message", data=packet.data)
+                        response = response.serialize()
+                        client.send(response)
+                    else:
+                        response = Packet(source="server", header="header", data="data from "+str(addr)+" ack")
+                        response = response.serialize()
+                        client.send(response)
 
             except ConnectionResetError:
                 print(f"Client: {addr}, has closed their connection...")

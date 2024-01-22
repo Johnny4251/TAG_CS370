@@ -3,6 +3,7 @@ import pickle
 # Packet for communication
 class Packet:
     def __init__(self, source, header, data=""):
+        self.source = source
         self.header = header
         self.data = data
 
