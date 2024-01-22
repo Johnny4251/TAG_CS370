@@ -49,19 +49,21 @@ class Testing:
                 print("-----")
 
     def run(self):
-
         threading.Thread(target=self.recv_thread).start()
         print(self.client)
-        try:
 
-            print("client running...")
+        try:
+            print("client simulation running...")
             while True:
                 time.sleep(1)
                 text = input("What would you like to send? ")
+                if text == "exit()": break
+
                 packet = Packet(self.name, "msg", text)
                 packet = packet.serialize()
                 self.send_data(packet)
-            
+                
+            self.client.close()
 
         except ConnectionResetError:
             print("host closed connection...")
