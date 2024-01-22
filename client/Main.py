@@ -1,5 +1,6 @@
 # Map builder located at https://editor.p5js.org/Blungus23/full/j1zqoJMKq
 import json
+import socket
 from Vector import Vector
 from GameClient import GameClient 
 from Boundary import Boundary
