@@ -83,6 +83,10 @@ class GameClient:
         if(self.debug_mode):
             for x in self.walls:
                 x.render(self.window)
+            if(len(self.circles) > 1):
+                 for c in self.circles:
+                    c.render(self.window)
+                 
         if(self.mosueB[0]):
              self.player.look(self.window,self.walls,self.circles)
         self.player.render(self.window)

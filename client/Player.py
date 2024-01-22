@@ -12,7 +12,7 @@ def radianToDegree(radian):
 
 class Player:
     def __init__(self,pos,ray_increment):
-        self.speed = 1
+        self.speed = 2
         self.size = 5
         self.col = (255,255,255)
         self.ray_count = 3  # low resolution 
@@ -32,6 +32,7 @@ class Player:
 
     def apply_fix(self,index):
         bump = 2
+        # Switch to if statement
         match index:
             case 0:
                 self.pos.x -= self.speed*bump
