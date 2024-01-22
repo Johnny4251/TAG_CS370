@@ -2,6 +2,7 @@ import socket
 import pickle
 from Packet import Packet
 
+
 class ClientSocket:
     def __init__(self, host='127.0.0.1', port=3000, listening=True):
 
@@ -14,7 +15,7 @@ class ClientSocket:
         if response.header == "lobby_full":
             print("lobby is full")
             print(f"max lobby count={response.data}")
-            self.client.close()
+            self.socket_client.close()
             self.listening = False
             return None
         return 

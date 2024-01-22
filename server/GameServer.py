@@ -1,6 +1,7 @@
 import socket
 import threading
 import pickle
+import time
 from Packet import Packet
 
 # Multithreaded server that can handle multiple clients
@@ -96,7 +97,10 @@ class GameServer:
                     client.send(response)
 
                 # Give client a thread
-                threading.Thread(target=self.client_thread, args=(client_conn, addr)).start()
+                try:
+                    threading.Thread(target=self.client_thread, args=(client_conn, addr)).start()
+                except Exception as e:
+                    print(e)
             else:
                 # Full lobby => no thread
                 print("rejecting client => lobby full")
@@ -109,4 +113,6 @@ class GameServer:
 
 if __name__ == "__main__":
     server = GameServer(client_max=5)
-    threading.Thread(target=server.run).start() 
+    server_thread = threading.Thread(target=server.run)
+    server_thread.start() 
+    server_thread.join() 
