@@ -49,7 +49,7 @@ class GameServer:
                     print(f"----------------------------")
 
                 for client in self.clients:
-                    response = Packet(header="server", data="data from "+str(addr)+" ack")
+                    response = Packet(source="server", header="header", data="data from "+str(addr)+" ack")
                     response = response.serialize()
                     client.send(response)
 
@@ -83,7 +83,7 @@ class GameServer:
                 self.clients.append(conn)
 
                 for client in self.clients:
-                    response = Packet(header="server", data="Say Hello! A new client has joined!")
+                    response = Packet(source="server", header="header", data="Say Hello! A new client has joined!")
                     response = response.serialize()
                     client.send(response)
 
@@ -92,7 +92,7 @@ class GameServer:
             else:
                 # Full lobby => no thread
                 print("rejecting client => lobby full")
-                data = Packet(header="lobby_full", data=self.client_max)
+                data = Packet(source= "server", header="lobby_full", data=self.client_max)
                 data = data.serialize()
                 conn.send(data)
                 conn.close()
