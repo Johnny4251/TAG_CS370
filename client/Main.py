@@ -1,5 +1,6 @@
 # Map builder located at https://editor.p5js.org/Blungus23/full/j1zqoJMKq
 import json
+import threading
 from ClientSocket import ClientSocket
 from Vector import Vector
 from GameClient import GameClient 
@@ -52,11 +53,15 @@ def gen_scene_from_file(client,file_name):
     return
      
 if __name__ == "__main__":
-    #gameSocket = ClientSocket()
+    gameSocket = ClientSocket()
     gameClient = GameClient()
+    socket_thread = threading.Thread(target=gameSocket.socket_receive_data,args=(gameClient.window_should_stay_open,))
+    socket_thread.start()
+    gameSocket.send_data()
     #gen_def_scene(gameClient)
     gen_scene_from_file(gameClient,'map_data2.json')
     while gameClient.window_should_stay_open:
         gameClient.update()
         gameClient.render()
     gameClient.kill_window()
+    gameSocket.socket_client.close()

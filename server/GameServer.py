@@ -53,8 +53,8 @@ class GameServer:
                     print(f"Data  : \t{packet.data}")
                     print(f"----------------------------")
 
-                handler = PacketHandler(client_conn, self.clients, packet)
-                handler.handle_event()
+                #handler = PacketHandler(client_conn, self.clients, packet)
+                #handler.handle_event()
 
                 for client in self.clients:
                     if packet.header == "msg":
@@ -116,7 +116,7 @@ class GameServer:
             print(f"Lobby Size ({len(self.clients)}/{self.client_max})")
 
 if __name__ == "__main__":
-    server = GameServer(client_max=5)
+    server = GameServer(client_max=5,debug=True)
     server_thread = threading.Thread(target=server.run)
     server_thread.start() 
     server_thread.join() 
