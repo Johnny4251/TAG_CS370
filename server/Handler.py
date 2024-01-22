@@ -6,11 +6,11 @@ class PacketHandler:
         self.conn = conn
         self.clients = clients
         self.packet = packet
-    
+
 
     def handle_event(self):
         if self.packet.header == "p_req_tag":
-            pass
+            self.__p_req_tag_event()
         elif self.packet.header == "p_key_press":
             pass
         elif self.packet.header == "p_direction":
@@ -25,13 +25,15 @@ class PacketHandler:
     def __p_req_tag_event(self):
         data = self.packet.data
         if data not in self.clients:
-            
-            pass
+            self.clients[data] = self.conn
+            print(f"client joining with tag: {data}")
+            data = Packet(source="server", dest=self.packet.data, header="tag_accepted", data=self.packet.data)
+            data = data.serialize()
+            self.conn.send(data)
         else:
             # tag is taken
-            print("client requested a key that is already in use, rejecting")
-            data = Packet(source="server", dest=self.packet.data, header="key_taken", data=self.packet.data)
+            print("client requested a tag that is already in use, kicking...")
+            data = Packet(source="server", dest=self.packet.data, header="p_tag_taken", data=self.packet.data)
             data = data.serialize()
             self.conn.send(data)
             self.conn.close()
-            

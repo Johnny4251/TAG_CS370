@@ -3,6 +3,7 @@ import threading
 import pickle
 import time
 from Packet import Packet
+from Handler import PacketHandler
 
 # Multithreaded server that can handle multiple clients
 class GameServer:
@@ -52,13 +53,16 @@ class GameServer:
                     print(f"Data  : \t{packet.data}")
                     print(f"----------------------------")
 
+                handler = PacketHandler(client_conn, self.clients, packet)
+                handler.handle_event()
+
                 for client in self.clients:
                     if packet.header == "msg":
                         response = Packet(source=packet.source, header="Message", data=packet.data)
                         response = response.serialize()
                         client.send(response)
                     else:
-                        response = Packet(source="server", header="header", data="data from "+str(addr)+" ack")
+                        response = Packet(source="server", header="header", data=packet.data)
                         response = response.serialize()
                         client.send(response)
 
@@ -89,7 +93,7 @@ class GameServer:
 
             # Check if lobby is full
             if len(self.clients) < self.client_max:
-                self.clients.append(client_conn)
+                #self.clients.append(client_conn)
 
                 for client in self.clients:
                     response = Packet(source="server", header="header", data="Say Hello! A new client has joined!")
