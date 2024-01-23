@@ -2,22 +2,24 @@ import threading
 from GameServer import GameServer
 import time
 
-class ServerManager:
-    def __init__(self):
-        pass
-
-    def create_new_server(self):
-        client_max = input("Max number of clients: ")
-        addr = input("IP? ")
-        port = input("Port? ")
-        debug_input = input("Debug mode?(y or n) ")
-        debug = False
-
-        if debug_input[0] == 'y':
-            debug = True
-        
-        server = GameServer(host=addr, port=int(port), client_max=client_max, debug=debug)
-        server.run()
-
 if __name__ == "__main__":
-    ServerManager.create_new_server()
+    server = GameServer(debug=False)
+    server_thread = threading.Thread(target=server.run)
+    server_thread.start()
+
+    time.sleep(1) # give thread a sec to catch up
+    cmd = ""
+    while cmd != "kill":
+        cmd = input("@TagServer>> ")
+        if cmd == "list clients":
+            print(server.clients_conns)
+        elif cmd == "/help":
+            print("===COMMANDS===")
+            print(">> list clients")
+            print(">> /help")
+            print("==============")
+        else:
+            print("Command not found! Use /help")
+
+    server.kill()
+    server_thread.join()

@@ -117,6 +117,9 @@ class GameServer:
 
             print(f"Lobby Size ({len(self.clients_conns)}/{self.client_max})")
 
+    def kill(self):
+        self.server.close()
+
 if __name__ == "__main__":
     server = GameServer(client_max=5,debug=True)
     server_thread = threading.Thread(target=server.run)
