@@ -53,7 +53,7 @@ def gen_scene_from_file(client,file_name):
     return
 
 if __name__ == "__main__":
-    gameSocket = ClientSocket()
+    gameSocket = ClientSocket('127.0.0.1')
     gameClient = GameClient(gameSocket)
     #gen_def_scene(gameClient)
     gen_scene_from_file(gameClient,'map_data2.json')
