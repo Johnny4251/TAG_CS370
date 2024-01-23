@@ -10,7 +10,7 @@ HIDER_SPEED = 1
 
 # Multithreaded server that can handle multiple clients
 class GameServer:
-    def __init__(self, host='127.0.0.1', port=3000, client_max=5, debug=False):
+    def __init__(self, host='67.248.194.2', port=3000, client_max=5, debug=False):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind((host, port))
         self.server.listen()
@@ -64,6 +64,7 @@ class GameServer:
                         response = response.serialize()
                         client_conn.send(response)
                 elif(packet.header == "key-press"):
+                    # wsad
                     if(packet.data == 119):
                         self.clients_data[client_id][1] -= HIDER_SPEED
                     elif(packet.data == 115):
@@ -77,7 +78,6 @@ class GameServer:
                         response = response.serialize()
                         client.send(response)
         
-
             except ConnectionResetError:
                 print(f"Client: {client_id}, has closed their connection...")
                 del self.clients_conns[client_id]
