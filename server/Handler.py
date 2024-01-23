@@ -33,7 +33,6 @@ class PacketHandler:
         self.client_conn.send(response)
 
     def __key_press_event(self):
-        print("key_press_event")
         if(self.packet.data == 119):
             self.clients_data[self.client_id][1] -= Utils.HIDER_SPEED
         elif(self.packet.data == 115):
