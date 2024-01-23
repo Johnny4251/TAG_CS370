@@ -40,7 +40,7 @@ class GameServer:
         while True:
             try:
                 # Recv data
-                data = client_conn.recv(4096)
+                data = client_conn.recv(Utils.BUFFER_SIZE)
                 if not data:
                     # WIP
                     print(f"Client {client_id}, sent no data so they are getting removed...")
