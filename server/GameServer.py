@@ -4,9 +4,10 @@ import pickle
 import time
 from Packet import Packet
 from Handler import PacketHandler
+import Utils
 from Utils import gen_uniquie_id
 
-HIDER_SPEED = 1
+
 
 # Multithreaded server that can handle multiple clients
 class GameServer:
@@ -39,7 +40,7 @@ class GameServer:
         while True:
             try:
                 # Recv data
-                data = client_conn.recv(4096)
+                data = client_conn.recv(Utils.BUFFER_SIZE)
                 if not data:
                     # WIP
                     print(f"Client {client_id}, sent no data so they are getting removed...")
@@ -57,27 +58,9 @@ class GameServer:
                     print(f"Data  : \t{packet.data}")
                     print(f"----------------------------")
 
-                if(packet.header == "kill-socket"):
-                        print("DISCONNECT: ",end="")
-                        print(packet.source)
-                        response = Packet(source=packet.source, header="kill-socket", data=packet.data)
-                        response = response.serialize()
-                        client_conn.send(response)
-                elif(packet.header == "key-press"):
-                    # wsad
-                    if(packet.data == 119):
-                        self.clients_data[client_id][1] -= HIDER_SPEED
-                    elif(packet.data == 115):
-                        self.clients_data[client_id][1] += HIDER_SPEED
-                    elif(packet.data == 97):
-                        self.clients_data[client_id][0] -= HIDER_SPEED
-                    elif(packet.data == 100):
-                        self.clients_data[client_id][0] += HIDER_SPEED
-                    for key,client in self.clients_conns.items():
-                        response = Packet(source="server", header="player-update", data=self.clients_data)
-                        response = response.serialize()
-                        client.send(response)
-        
+                packetHandler = PacketHandler(client_conn, self.clients_conns, self.clients_data, client_id, packet)
+                packetHandler.handle_event()
+
             except ConnectionResetError:
                 print(f"Client: {client_id}, has closed their connection...")
                 del self.clients_conns[client_id]
