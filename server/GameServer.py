@@ -58,26 +58,8 @@ class GameServer:
                     print(f"Data  : \t{packet.data}")
                     print(f"----------------------------")
 
-                if(packet.header == "kill-socket"):
-                        print("DISCONNECT: ",end="")
-                        print(packet.source)
-                        response = Packet(source=packet.source, header="kill-socket", data=packet.data)
-                        response = response.serialize()
-                        client_conn.send(response)
-                elif(packet.header == "key-press"):
-                    if(packet.data == 119):
-                        self.clients_data[client_id][1] -= Utils.HIDER_SPEED
-                    elif(packet.data == 115):
-                        self.clients_data[client_id][1] += Utils.HIDER_SPEED
-                    elif(packet.data == 97):
-                        self.clients_data[client_id][0] -= Utils.HIDER_SPEED
-                    elif(packet.data == 100):
-                        self.clients_data[client_id][0] += Utils.HIDER_SPEED
-                    for key,client in self.clients_conns.items():
-                        response = Packet(source="server", header="player-update", data=self.clients_data)
-                        response = response.serialize()
-                        client.send(response)
-        
+                packetHandler = PacketHandler(client_conn, self.clients_conns, self.clients_data, client_id, packet)
+                packetHandler.handle_event()
 
             except ConnectionResetError:
                 print(f"Client: {client_id}, has closed their connection...")
