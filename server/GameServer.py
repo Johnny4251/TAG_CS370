@@ -103,7 +103,7 @@ class GameServer:
                 except Exception as e:
                     print(e)
                 
-                self.clients_data[id] = [200,200]
+                self.clients_data[id] = [Utils.PLAYER_START_X,Utils.PLAYER_START_Y]
                 response = Packet(source="server", header="connected", data=id)
                 response = response.serialize()
                 self.clients_conns[id].send(response)
