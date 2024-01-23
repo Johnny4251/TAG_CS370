@@ -3,6 +3,7 @@ import pygame
 import numpy as np 
 import math as Math
 from Ray import Ray
+from Circle import Circle
 from Vector import Vector
 
 def degreeToRadian(degree):
@@ -12,7 +13,7 @@ def radianToDegree(radian):
 
 class Player:
     def __init__(self,pos,ray_increment):
-        self.speed = 2
+        self.speed = 1
         self.size = 5
         self.col = (255,255,255)
         self.ray_count = 3  # low resolution 
@@ -69,7 +70,7 @@ class Player:
         self.pos.x = x
         self.pos.y = y
     
-    def look(self,window,walls,objs):
+    def look(self,window,walls,objs,player_id):
         for ray in self.rays:
             pt = None
             closest = None
@@ -84,15 +85,19 @@ class Player:
                         record = dist
                         closest = pt
                         col = wall.col
-            for obj in objs:
-                pt = ray.cast_circle(obj)
-                if(pt):
-                    dist = Vector.dist(self.pos,pt[0])
-                    if(dist < record):
-                        record = dist
-                        closest = pt[0]
-                        circ = pt[1]
-                        col = obj.col
+            if(objs != None):
+                for key,obj in objs.items():
+                    if(key != player_id):
+                        c = Circle(obj[0],obj[1],10)
+                        c.render(window)
+                        pt = ray.cast_circle(c)
+                        if(pt):
+                            dist = Vector.dist(self.pos,pt[0])
+                            if(dist < record):
+                                record = dist
+                                closest = pt[0]
+                                circ = pt[1]
+                                col = c.col
 
             if (closest):
                 #Draw Ray

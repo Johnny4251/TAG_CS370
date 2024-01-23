@@ -5,7 +5,7 @@ from Vector import Vector
 from Player import Player
 
 class GameClient:
-    def __init__(self,client_socket=None):
+    def __init__(self,client_socket=None):     
         pygame.init()
         self.debug_mode = False
         self.window_should_stay_open = True
@@ -24,6 +24,8 @@ class GameClient:
         self.amp = 50
         self.freq = 20
         self.offy = 200
+        self.client_socket = client_socket
+        self.client_socket.start_thread()
         return
     
     def poll_events(self):
@@ -41,18 +43,24 @@ class GameClient:
         if self.keys[pygame.K_p]:
                 self.debug_mode =  not self.debug_mode
         past_state = (self.player.pos.x,self.player.pos.y)
+        key_hit = None
+        # Could turn into a buffer of inputs that then gets sent and processed on server
         if self.keys[pygame.K_w]:
+                key_hit = pygame.K_w
                 self.player.update(self.player.pos.x,  self.player.pos.y - self.player.speed)
-        if self.keys[pygame.K_s]:
+        elif self.keys[pygame.K_s]:
+                key_hit = pygame.K_s
                 self.player.update(self.player.pos.x,  self.player.pos.y + self.player.speed)
-        if self.keys[pygame.K_a]:
+        elif self.keys[pygame.K_a]:
+                key_hit = pygame.K_a
                 self.player.update(self.player.pos.x - self.player.speed,self.player.pos.y)
-        if self.keys[pygame.K_d]:
+        elif self.keys[pygame.K_d]:
+                key_hit = pygame.K_d
                 self.player.update(self.player.pos.x + self.player.speed,self.player.pos.y)
-        self.player.check_collisions(self.walls)
-    
-             
-             
+        result = self.player.check_collisions(self.walls)  
+        if(not result and key_hit != None):
+             self.client_socket.send_data("key-press",key_hit)
+                  
         return
 
     def update(self):
@@ -61,17 +69,7 @@ class GameClient:
         dx = self.mouseX - (self.player.pos.x)
         dy = self.mouseY - (self.player.pos.y)
         theta = Math.atan2(dy,dx)
-        self.player.update_rays(theta)
-
-        # This is for the default scene and can be deleted later
-        if(len(self.circles) > 1):
-            self.circles[1].pos.x = (self.circles[1].pos.x + 1) % self.window_width 
-            self.circles[1].pos.y = Math.sin(self.circles[1].pos.x/self.freq) * self.amp + self.offy
-            if(self.circles[1].pos.x == 0):
-                 self.amp = random.randint(10,200)
-                 self.freq = random.randint(10,200)
-                 self.offy = random.randint(0,self.window_height-30)    
-    
+        self.player.update_rays(theta)    
         self.clock.tick(60) # fixed 60 tick update 
         return
     
@@ -85,11 +83,12 @@ class GameClient:
                     c.render(self.window)
                  
         if(self.mosueB[0]):
-             self.player.look(self.window,self.walls,self.circles)
+             self.player.look(self.window,self.walls,self.client_socket.player_data,self.client_socket.id)
         self.player.render(self.window)
         pygame.display.flip()
         return
     
     def kill_window(self):
         pygame.quit()
+        self.client_socket.send_data("kill-socket")
         return

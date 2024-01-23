@@ -51,17 +51,13 @@ def gen_scene_from_file(client,file_name):
     wall = Boundary(Vector(0, client.window_height), Vector(0, 0),(0,0,0))
     client.walls.append(wall)   
     return
-     
+
 if __name__ == "__main__":
     gameSocket = ClientSocket()
-    gameClient = GameClient()
-    socket_thread = threading.Thread(target=gameSocket.socket_receive_data,args=(gameClient.window_should_stay_open,))
-    socket_thread.start()
-    gameSocket.send_data()
+    gameClient = GameClient(gameSocket)
     #gen_def_scene(gameClient)
     gen_scene_from_file(gameClient,'map_data2.json')
     while gameClient.window_should_stay_open:
         gameClient.update()
         gameClient.render()
     gameClient.kill_window()
-    gameSocket.socket_client.close()

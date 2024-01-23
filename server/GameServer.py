@@ -4,6 +4,9 @@ import pickle
 import time
 from Packet import Packet
 from Handler import PacketHandler
+from Utils import gen_uniquie_id
+
+HIDER_SPEED = 1
 
 # Multithreaded server that can handle multiple clients
 class GameServer:
@@ -11,9 +14,8 @@ class GameServer:
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind((host, port))
         self.server.listen()
-        
-        self.clients = []
-        self.clients_dict = {}
+        self.clients_data = {}
+        self.clients_conns = {}
         self.client_max = client_max
         self.debug = debug
     
@@ -32,15 +34,17 @@ class GameServer:
         return pickle.loads(data)
 
     # Thread created to handle each client
-    def client_thread(self, client_conn, addr):
+    def client_thread(self, client_conn, addr,_client_id):
+        client_id = _client_id
         while True:
             try:
                 # Recv data
                 data = client_conn.recv(4096)
                 if not data:
                     # WIP
-                    print(f"Client {addr}, sent no data so they are getting removed...")
-                    self.clients.remove(client_conn)
+                    print(f"Client {client_id}, sent no data so they are getting removed...")
+                    del self.clients_conns[client_id]
+                    del self.clients_data[client_id]
                     client_conn.close()
                     break
 
@@ -53,30 +57,40 @@ class GameServer:
                     print(f"Data  : \t{packet.data}")
                     print(f"----------------------------")
 
-                #handler = PacketHandler(client_conn, self.clients, packet)
-                #handler.handle_event()
-
-                for client in self.clients:
-                    if packet.header == "msg":
-                        response = Packet(source=packet.source, header="Message", data=packet.data)
+                if(packet.header == "kill-socket"):
+                        print("DISCONNECT: ",end="")
+                        print(packet.source)
+                        response = Packet(source=packet.source, header="kill-socket", data=packet.data)
+                        response = response.serialize()
+                        client_conn.send(response)
+                elif(packet.header == "key-press"):
+                    if(packet.data == 119):
+                        self.clients_data[client_id][1] -= HIDER_SPEED
+                    elif(packet.data == 115):
+                        self.clients_data[client_id][1] += HIDER_SPEED
+                    elif(packet.data == 97):
+                        self.clients_data[client_id][0] -= HIDER_SPEED
+                    elif(packet.data == 100):
+                        self.clients_data[client_id][0] += HIDER_SPEED
+                    for key,client in self.clients_conns.items():
+                        response = Packet(source="server", header="player-update", data=self.clients_data)
                         response = response.serialize()
                         client.send(response)
-                    else:
-                        response = Packet(source="server", header="header", data=packet.data)
-                        response = response.serialize()
-                        client.send(response)
+        
 
             except ConnectionResetError:
-                print(f"Client: {addr}, has closed their connection...")
-                self.clients.remove(client_conn)
+                print(f"Client: {client_id}, has closed their connection...")
+                del self.clients_conns[client_id]
+                del self.clients_data[client_id]
                 client_conn.close()
                 break
 
             except Exception as e:
                 # this exception is WIP
-                print(f"There was an issue with a client: {addr}, so they are getting removed...")
+                print(f"There was an issue with a client: {client_id}, so they are getting removed...")
                 print(f"The issue: {e}")
-                self.clients.remove(client_conn)
+                del self.clients_conns[client_id]
+                del self.clients_data[client_id]
                 client_conn.close()
                 break
 
@@ -89,22 +103,27 @@ class GameServer:
 
             # client accepted -> continue
             client_conn, addr = self.server.accept()
-            print(f"New Client: {addr}")
-
+            id = gen_uniquie_id(5)
+            print(f"New Client: {id}")
             # Check if lobby is full
-            if len(self.clients) < self.client_max:
-                #self.clients.append(client_conn)
+            if len(self.clients_conns) < self.client_max:
 
-                for client in self.clients:
-                    response = Packet(source="server", header="header", data="Say Hello! A new client has joined!")
+                for key,client in self.clients_conns.items():
+                    response = Packet(source="server", header="server-message", data="Say Hello! A new client has joined!")
                     response = response.serialize()
                     client.send(response)
 
+                self.clients_conns[id] = client_conn
                 # Give client a thread
                 try:
-                    threading.Thread(target=self.client_thread, args=(client_conn, addr)).start()
+                    threading.Thread(target=self.client_thread, args=(client_conn, addr,id)).start()
                 except Exception as e:
                     print(e)
+                
+                self.clients_data[id] = [200,200]
+                response = Packet(source="server", header="connected", data=id)
+                response = response.serialize()
+                self.clients_conns[id].send(response)
             else:
                 # Full lobby => no thread
                 print("rejecting client => lobby full")
@@ -113,7 +132,7 @@ class GameServer:
                 client_conn.send(data)
                 client_conn.close()
 
-            print(f"Lobby Size ({len(self.clients)}/{self.client_max})")
+            print(f"Lobby Size ({len(self.clients_conns)}/{self.client_max})")
 
 if __name__ == "__main__":
     server = GameServer(client_max=5,debug=True)
