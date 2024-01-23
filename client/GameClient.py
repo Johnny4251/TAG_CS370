@@ -2,6 +2,7 @@ import pygame
 import math as Math
 import random
 from Vector import Vector
+from Circle import Circle
 from Player import Player
 
 class GameClient:
@@ -20,10 +21,6 @@ class GameClient:
         self.mouseX = 0
         self.mouseY = 0
         self.mosueB = -1
-        #these can be removed purely for demo scene
-        self.amp = 50
-        self.freq = 20
-        self.offy = 200
         self.client_socket = client_socket
         self.client_socket.start_thread()
         return
@@ -78,9 +75,10 @@ class GameClient:
         if(self.debug_mode):
             for x in self.walls:
                 x.render(self.window)
-            if(len(self.circles) > 1):
-                 for c in self.circles:
-                    c.render(self.window)
+            if(self.client_socket.player_data != None):
+                 for k,c in self.client_socket.player_data.items():
+                    p = Circle(c[0],c[1],10)
+                    p.render(self.window)
                  
         if(self.mosueB[0]):
              self.player.look(self.window,self.walls,self.client_socket.player_data,self.client_socket.id)

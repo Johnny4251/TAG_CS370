@@ -11,7 +11,7 @@ from Utils import gen_uniquie_id
 
 # Multithreaded server that can handle multiple clients
 class GameServer:
-    def __init__(self, host='127.0.0.1', port=3000, client_max=5, debug=False):
+    def __init__(self, host='67.248.194.2', port=3000, client_max=5, debug=False):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind((host, port))
         self.server.listen()

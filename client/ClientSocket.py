@@ -6,7 +6,7 @@ from Packet import Packet
 
 
 class ClientSocket:
-    def __init__(self, host='127.0.0.1', port=3000, listening=True):
+    def __init__(self, host='67.248.194.2', port=3000, listening=True):
         self.socket_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket_client.connect((host, port))
         self.listening = listening

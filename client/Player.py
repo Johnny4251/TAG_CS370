@@ -89,7 +89,6 @@ class Player:
                 for key,obj in objs.items():
                     if(key != player_id):
                         c = Circle(obj[0],obj[1],10)
-                        c.render(window)
                         pt = ray.cast_circle(c)
                         if(pt):
                             dist = Vector.dist(self.pos,pt[0])
