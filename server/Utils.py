@@ -1,5 +1,7 @@
 import random
 
+HIDER_SPEED = 1
+
 def gen_uniquie_id(length):
     # Define the characters you want in the random string
     characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" 

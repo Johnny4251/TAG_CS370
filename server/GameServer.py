@@ -4,9 +4,10 @@ import pickle
 import time
 from Packet import Packet
 from Handler import PacketHandler
+import Utils
 from Utils import gen_uniquie_id
 
-HIDER_SPEED = 1
+
 
 # Multithreaded server that can handle multiple clients
 class GameServer:
@@ -65,13 +66,13 @@ class GameServer:
                         client_conn.send(response)
                 elif(packet.header == "key-press"):
                     if(packet.data == 119):
-                        self.clients_data[client_id][1] -= HIDER_SPEED
+                        self.clients_data[client_id][1] -= Utils.HIDER_SPEED
                     elif(packet.data == 115):
-                        self.clients_data[client_id][1] += HIDER_SPEED
+                        self.clients_data[client_id][1] += Utils.HIDER_SPEED
                     elif(packet.data == 97):
-                        self.clients_data[client_id][0] -= HIDER_SPEED
+                        self.clients_data[client_id][0] -= Utils.HIDER_SPEED
                     elif(packet.data == 100):
-                        self.clients_data[client_id][0] += HIDER_SPEED
+                        self.clients_data[client_id][0] += Utils.HIDER_SPEED
                     for key,client in self.clients_conns.items():
                         response = Packet(source="server", header="player-update", data=self.clients_data)
                         response = response.serialize()
