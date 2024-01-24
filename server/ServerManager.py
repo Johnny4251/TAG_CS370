@@ -17,7 +17,7 @@ if __name__ == "__main__":
     while cmd != COMMANDS[0]: # kill
         cmd = input("@TagServer>> ")
         if cmd == COMMANDS[1]: # list clients
-            print(server.clients_conns)
+            print(server.clients_conns.keys())
         elif cmd == COMMANDS[2]: # /help
             print("===COMMANDS===")
             for command in COMMANDS:
