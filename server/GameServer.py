@@ -114,9 +114,11 @@ class GameServer:
                 data = data.serialize()
                 client_conn.send(data)
                 client_conn.close()
+            self.print_lobby_size()
 
-            print(f"Lobby Size ({len(self.clients_conns)}/{self.client_max})")
-
+    def print_lobby_size(self):
+        print(f"Lobby Size ({len(self.clients_conns)}/{self.client_max})")
+        
     # forces server to crash by killing server connection
     def kill(self):
         self.server.close()
