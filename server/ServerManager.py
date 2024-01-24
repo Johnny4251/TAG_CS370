@@ -2,12 +2,15 @@ import threading
 from GameServer import GameServer
 import time
 
-COMMANDS = ["kill", "list clients", "/help"]
+COMMANDS = ["kill", "list clients", "/help", "run"]
 
-if __name__ == "__main__":
+def create_server():
     server = GameServer(debug=False)
     server_thread = threading.Thread(target=server.run)
-    server_thread.start()
+    return server, server_thread
+
+if __name__ == "__main__":
+    server, server_thread = create_server()
 
     time.sleep(1) # give thread a sec to catch up
     cmd = ""
@@ -20,8 +23,17 @@ if __name__ == "__main__":
             for command in COMMANDS:
                 print(">> " + command)
             print("==============")
+        elif cmd == COMMANDS[3]: # run
+            print("starting server")
+            server_thread.start()
         else:
-            print("Command not found! Use /help")
+            # if statement handles bug
+            if cmd != COMMANDS[0]: print("Command not found! Use /help")
 
-    server.kill()
-    server_thread.join()
+        time.sleep(0.5) # give thread a sec to catch up
+    try:
+        server.kill()
+        server_thread.join()
+    except Exception as e:
+        print("Exception: ", e)
+    print("Goodbye!")
