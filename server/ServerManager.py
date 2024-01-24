@@ -2,7 +2,7 @@ import threading
 from GameServer import GameServer
 import time
 
-COMMANDS = ["kill", "list clients", "/help", "run"]
+COMMANDS = ["kill", "list clients", "help", "run"]
 
 def create_server():
     server = GameServer(debug=False)
@@ -18,7 +18,7 @@ if __name__ == "__main__":
         cmd = input("@TagServer>> ")
         if cmd == COMMANDS[1]: # list clients
             print(server.clients_conns.keys())
-        elif cmd == COMMANDS[2]: # /help
+        elif cmd == COMMANDS[2]: # help
             print("===COMMANDS===")
             for command in COMMANDS:
                 print(">> " + command)
@@ -28,7 +28,7 @@ if __name__ == "__main__":
             server_thread.start()
         else:
             # if statement handles bug
-            if cmd != COMMANDS[0]: print("Command not found! Use /help")
+            if cmd != COMMANDS[0]: print("Command not found! Try >>help for help")
 
         time.sleep(0.5) # give thread a sec to catch up
     try:
