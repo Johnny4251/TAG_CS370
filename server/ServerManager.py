@@ -12,9 +12,7 @@ def create_server():
 if __name__ == "__main__":
     server, server_thread = create_server()
 
-    #time.sleep(1) # give thread a sec to catch up
-    #cmd = ""
-    while True: # kill
+    while True: 
         cmd = input("@TagServer>> ")
         if cmd == COMMANDS[1]: # list clients
             print(server.clients_conns.keys())
