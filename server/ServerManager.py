@@ -12,7 +12,7 @@ def create_server():
 if __name__ == "__main__":
     server, server_thread = create_server()
 
-    time.sleep(1) # give thread a sec to catch up
+    #time.sleep(1) # give thread a sec to catch up
     cmd = ""
     while cmd != COMMANDS[0]: # kill
         cmd = input("@TagServer>> ")
@@ -25,7 +25,10 @@ if __name__ == "__main__":
             print("==============")
         elif cmd == COMMANDS[3]: # run
             print("starting server")
-            server_thread.start()
+            try:
+                server_thread.start()
+            except Exception as e:
+                print("Exception: ", e)
         else:
             # if statement handles bug
             if cmd != COMMANDS[0]: print("Command not found! Try >>help for help")
